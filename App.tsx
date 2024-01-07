@@ -4,8 +4,8 @@
  *
  * @format
  */
-
-import React from 'react';
+import '@shopify/react-native-skia';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -14,6 +14,7 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
@@ -24,6 +25,32 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {ProgressBar} from './src/components/ProgressBar';
+
+import {
+  mix,
+  Blur,
+  Canvas,
+  Circle,
+  Fill,
+  Group,
+  LinearGradient,
+  rect,
+  useFont,
+  vec,
+  fitRects,
+  rect2rect,
+} from '@shopify/react-native-skia';
+
+import {
+  Easing,
+  cancelAnimation,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import {Test} from './src/components/Test';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -55,6 +82,25 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+const width = 390;
+const height = 844;
+const src = rect(0, 0, width, height);
+
+export const useLoop = ({duration}: {duration: number}) => {
+  const progress = useSharedValue(0);
+  useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, {duration, easing: Easing.inOut(Easing.ease)}),
+      -1,
+      true,
+    );
+    return () => {
+      cancelAnimation(progress);
+    };
+  }, [duration, progress]);
+  return progress;
+};
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -62,16 +108,29 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const window = useWindowDimensions();
+  const dst = rect(0, 0, window.width, window.height);
+  const rects = fitRects('cover', src, dst);
+  const transform = rect2rect(rects.src, rects.dst);
+  const translateY = useSharedValue(0);
+  const t = useLoop({duration: 3000});
+  const x = useDerivedValue(() => mix(t.value, 0, 180), [t]);
+  const progress = useDerivedValue(() => x.value / 192, [x]);
+  const font = useFont(require('./src/components/SF-Pro-Display-Bold.otf'), 17);
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
+
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
+
+        {/* <Test /> */}
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -89,7 +148,19 @@ function App(): React.JSX.Element {
           <Section title="Learn More">
             Read the docs to discover what to do next:
           </Section>
-          <LearnMoreLinks />
+          <Canvas style={{flex: 1, width: 400, height: 200}} mode="continuous">
+            {/* <Group transform={transform}> */}
+            <ProgressBar progress={progress} />
+
+            {/* </Group> */}
+          </Canvas>
+          <Canvas style={{flex: 1, width: 400, height: 200}} mode="continuous">
+            {/* <Group transform={transform}> */}
+            <ProgressBar progress={progress} />
+
+            {/* </Group> */}
+          </Canvas>
+          {/* <LearnMoreLinks /> */}
         </View>
       </ScrollView>
     </SafeAreaView>
