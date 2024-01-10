@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   View,
   useWindowDimensions,
+  ToastAndroid,
 } from 'react-native';
 import {
   Blur,
@@ -155,6 +156,7 @@ export const Neumorphism = () => {
         'https://smart-pot-server.onrender.com/state/pump/active',
       );
       console.log('res', res);
+      ToastAndroid.show('Đang tưới nước', ToastAndroid.SHORT);
     } catch (error) {
       console.log('error', error);
     }
@@ -166,6 +168,7 @@ export const Neumorphism = () => {
         'https://smart-pot-server.onrender.com/state/light/active',
       );
       console.log('res', res);
+      ToastAndroid.show('Đang bật đèn ', ToastAndroid.SHORT);
     } catch (error) {
       console.log('error', error);
     }
