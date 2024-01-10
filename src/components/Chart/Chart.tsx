@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {LineChart} from 'react-native-wagmi-charts';
 
-const data3 = [
+const dataTest = [
   {
     timestamp: 1625945400000,
     value: 33575.25,

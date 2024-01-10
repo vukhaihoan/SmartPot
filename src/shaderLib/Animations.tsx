@@ -1,20 +1,20 @@
-import type { Vector } from "@shopify/react-native-skia";
-import { useEffect } from "react";
+import type {Vector} from '@shopify/react-native-skia';
+import {useEffect} from 'react';
 import {
   Easing,
   cancelAnimation,
   useSharedValue,
   withRepeat,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
-export const useLoop = ({ duration }: { duration: number }) => {
+export const useLoop = ({duration}: {duration: number}) => {
   const progress = useSharedValue(0);
   useEffect(() => {
     progress.value = withRepeat(
-      withTiming(1, { duration, easing: Easing.inOut(Easing.ease) }),
+      withTiming(1, {duration, easing: Easing.inOut(Easing.ease)}),
       -1,
-      true
+      true,
     );
     return () => {
       cancelAnimation(progress);
@@ -26,22 +26,22 @@ export const useLoop = ({ duration }: { duration: number }) => {
 export const translate = ({
   x,
   y,
-}: Vector): [{ translateX: number }, { translateY: number }] => {
-  "worklet";
-  return [{ translateX: x }, { translateY: y }];
+}: Vector): [{translateX: number}, {translateY: number}] => {
+  'worklet';
+  return [{translateX: x}, {translateY: y}];
 };
 const fade = (t: number) => {
-  "worklet";
+  'worklet';
   return t * t * t * (t * (t * 6 - 15) + 10);
 };
 
 const lerp = (a: number, b: number, t: number) => {
-  "worklet";
+  'worklet';
   return (1 - t) * a + t * b;
 };
 
 const grad = (hash: number, x: number, y: number) => {
-  "worklet";
+  'worklet';
   const h = hash & 15;
   //const grad = 1 + (h & 7); // Gradient value is one of 8 possible values (1, 2, ..., 8)
   return (h & 8 ? -x : x) + (h & 4 ? -y : y);
@@ -63,7 +63,7 @@ export const getSeed = () => {
 };
 
 export const perlin = (seed: number[], x: number, y: number) => {
-  "worklet";
+  'worklet';
   const X = Math.floor(x) & 255;
   const Y = Math.floor(y) & 255;
   x -= Math.floor(x);
@@ -75,6 +75,6 @@ export const perlin = (seed: number[], x: number, y: number) => {
   return lerp(
     lerp(grad(seed[a], x, y), grad(seed[b], x - 1, y), u),
     lerp(grad(seed[a + 1], x, y - 1), grad(seed[b + 1], x - 1, y - 1), u),
-    v
+    v,
   );
 };

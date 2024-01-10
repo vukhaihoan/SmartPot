@@ -6,7 +6,6 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import {
-  mix,
   Blur,
   Canvas,
   Circle,
@@ -17,22 +16,14 @@ import {
   useFont,
   vec,
   fitRects,
-  Text,
   rect2rect,
 } from '@shopify/react-native-skia';
 import {Text as RNText} from 'react-native';
-import {useDerivedValue, useSharedValue} from 'react-native-reanimated';
-
-import {useLoop} from '../../shaderLib/Animations';
+import {useSharedValue} from 'react-native-reanimated';
 
 import {Title} from './components/Title';
 import {ProgressBar} from './components/ProgressBar';
-// import { Snow } from "./components/icons/Snow";
-// import { Control } from "./components/Control";
-// import { Wind } from "./components/icons/Wind";
-// import { Sun } from "./components/icons/Sun";
-// import { Power } from "./components/icons/Power";
-import {Mode} from './components/Mode';
+
 import {Control} from './components/Control';
 import {Snow} from './components/icons/Snow';
 import {Modalize} from 'react-native-modalize';
@@ -57,18 +48,9 @@ export const Neumorphism = () => {
   const dst = rect(0, 0, window.width, window.height);
   const rects = fitRects('cover', src, dst);
   const transform = rect2rect(rects.src, rects.dst);
-  const translateY = useSharedValue(0);
-  // const t = useLoop({duration: 3000});
-  // const x = useDerivedValue(() => mix(t.value, 0, 180), [t]);
-  // const progress = useDerivedValue(() => x.value / 192, [x]);
+
   const progress = useSharedValue(40 / 100);
   const font = useFont(require('./components/SF-Pro-Display-Bold.otf'), 17);
-
-  // const modalizeRef = useRef<Modalize>(null);
-
-  // const onOpen = () => {
-  //   modalizeRef.current?.open();
-  // };
 
   const [data, setData] = React.useState([]);
   const [state, setState] = React.useState({});
