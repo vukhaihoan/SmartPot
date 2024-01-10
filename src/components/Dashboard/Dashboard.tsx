@@ -139,7 +139,7 @@ export const Neumorphism = () => {
       const displayData = (data as any).map(item => {
         return {
           value: item[type],
-          timeStamp: new Date(item.timeStamp).getTime(),
+          timestamp: new Date(item.timestamp).getTime(),
         };
       });
       setDisplayData(displayData);
@@ -239,12 +239,16 @@ export const Neumorphism = () => {
         </Group>
       </Canvas>
 
-      <Modalize alwaysOpen={200} modalStyle={styles.modalize}>
+      <Modalize
+        alwaysOpen={120}
+        modalStyle={styles.modalize}
+        adjustToContentHeight={true}>
         <View
           style={{
             display: 'flex',
             flexDirection: 'row',
-            paddingVertical: 20,
+            paddingTop: 20,
+            paddingBottom: 36,
             justifyContent: 'space-around',
           }}>
           <TouchableOpacity
