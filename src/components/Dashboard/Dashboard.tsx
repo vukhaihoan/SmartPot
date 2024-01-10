@@ -41,7 +41,7 @@ const src = rect(0, 0, width, height);
 enum SenSorType {
   temperature = 'temperature',
   humidity = 'humidity',
-  light = 'light',
+  // light = 'light',
 }
 
 export const Neumorphism = () => {
@@ -156,7 +156,7 @@ export const Neumorphism = () => {
         'https://smart-pot-server.onrender.com/state/pump/active',
       );
       console.log('res', res);
-      ToastAndroid.show('Đang tưới nước', ToastAndroid.SHORT);
+      ToastAndroid.show('Đang gửi yêu cầu ', ToastAndroid.SHORT);
     } catch (error) {
       console.log('error', error);
     }
@@ -168,7 +168,7 @@ export const Neumorphism = () => {
         'https://smart-pot-server.onrender.com/state/light/active',
       );
       console.log('res', res);
-      ToastAndroid.show('Đang bật đèn ', ToastAndroid.SHORT);
+      ToastAndroid.show('Đang gửi yêu cầu ', ToastAndroid.SHORT);
     } catch (error) {
       console.log('error', error);
     }
@@ -243,10 +243,12 @@ export const Neumorphism = () => {
             <MaterialIcons
               name="water-drop"
               size={30}
-              color={state?.PumpStatus === true ? '#56CCF2' : 'white'}
+              // color={state?.PumpStatus === true ? '#56CCF2' : 'white'}
+              color={state?.PumpActive === true ? '#56CCF2' : 'white'}
             />
             <RNText style={styles.toggleText}>
-              {state?.PumpStatus === true ? 'Đang tưới' : 'Tưới nước'}
+              {/* {state?.PumpStatus === true ? 'Đang tưới' : 'Tưới nước'} */}
+              {state?.PumpActive === true ? 'Đang tưới' : 'Tưới nước'}
             </RNText>
           </TouchableOpacity>
           <View
@@ -264,7 +266,7 @@ export const Neumorphism = () => {
               <Icon name="left" size={18} color="white" />
             </TouchableOpacity>
             <RNText style={styles.tempText}>{currentTemp}</RNText>
-            <MIcon name="temperature-celsius" size={20} color="white" />
+            {/* <MIcon name="temperature-celsius" size={20} color="white" /> */}
             <TouchableOpacity
               style={{
                 marginLeft: 30,
@@ -284,10 +286,10 @@ export const Neumorphism = () => {
             <MaterialIcons
               name="light-mode"
               size={30}
-              color={state?.LightStatus === true ? '#56CCF2' : 'white'}
+              color={state?.LightActive === true ? '#56CCF2' : 'white'}
             />
             <RNText style={styles.toggleText}>
-              {state?.LightStatus === true ? 'Đang bật' : 'Bật đèn'}
+              {state?.LightActive === true ? 'Đang bật' : 'Bật đèn'}
             </RNText>
           </TouchableOpacity>
         </View>

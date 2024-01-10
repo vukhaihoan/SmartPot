@@ -34,13 +34,13 @@ const colors = ['#2FB8FF', '#9EECD9'];
 export const ProgressBar = ({progress}: ProgressBarProps) => {
   const font = useFont(require('./SF-Mono-Semibold.otf'), 32);
   const text = useDerivedValue(
-    () => `${Math.round(progress.value * 100)}°C`,
+    () => `${Math.round(progress.value * 100)}`,
     [progress],
   );
   if (font === null) {
     return null;
   }
-  const textWidth = font.measureText('00°C').width;
+  const textWidth = font.measureText('00').width;
   return (
     <Group transform={[{translate: [100, 223]}]}>
       <Group>
