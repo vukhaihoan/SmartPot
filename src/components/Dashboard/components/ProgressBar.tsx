@@ -54,6 +54,7 @@ export const ProgressBar = ({progress}: ProgressBarProps) => {
           <BoxShadow dx={-18} dy={-18} blur={65} color="#485057" />
         </Box>
       </Group>
+
       <Box box={fromCircle(37 + 60, 37 + 60, 60)} color="#32363B">
         <BoxShadow
           dx={-25}
