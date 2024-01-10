@@ -24,8 +24,13 @@ export const Chart = ({data}) => {
     <LineChart.Provider data={data}>
       <LineChart>
         <LineChart.Path color="#56CCF2" />
-        <LineChart.CursorCrosshair />
-        <LineChart.Tooltip cursorGutter={60} xGutter={16} yGutter={16} />
+        <LineChart.CursorCrosshair color="#56CCF2">
+          <LineChart.Tooltip
+            textStyle={{
+              color: 'white',
+            }}
+          />
+        </LineChart.CursorCrosshair>
       </LineChart>
     </LineChart.Provider>
   );

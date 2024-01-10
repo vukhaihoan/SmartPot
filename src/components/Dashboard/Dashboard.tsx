@@ -1,5 +1,10 @@
 import React, {useEffect, useMemo, useRef} from 'react';
-import {StyleSheet, TouchableOpacity, useWindowDimensions} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import {
   mix,
   Blur,
@@ -15,6 +20,7 @@ import {
   Text,
   rect2rect,
 } from '@shopify/react-native-skia';
+import {Text as RNText} from 'react-native';
 import {useDerivedValue, useSharedValue} from 'react-native-reanimated';
 
 import {useLoop} from '../../shaderLib/Animations';
@@ -31,6 +37,9 @@ import {Control} from './components/Control';
 import {Snow} from './components/icons/Snow';
 import {Modalize} from 'react-native-modalize';
 import {Chart} from '../Chart/Chart';
+import Icon from 'react-native-vector-icons/AntDesign';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 
 const width = 390;
@@ -62,6 +71,7 @@ export const Neumorphism = () => {
   // };
 
   const [data, setData] = React.useState([]);
+  const [state, setState] = React.useState({});
   const [refresh, setRefresh] = React.useState(false);
   const [currentTemp, setCurrentTemp] = React.useState(0);
   const [displayData, setDisplayData] = React.useState([]);
@@ -86,6 +96,27 @@ export const Neumorphism = () => {
     }
   };
 
+  const getState = async () => {
+    try {
+      const res = await axios.get(
+        'https://smart-pot-server.onrender.com/state',
+      );
+
+      const data = res.data.data;
+
+      setState(data);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getState();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     getSensors();
   }, [refresh]);
@@ -108,7 +139,7 @@ export const Neumorphism = () => {
       const displayData = (data as any).map(item => {
         return {
           value: item[type],
-          timeStamp: item.timeStamp,
+          timeStamp: new Date(item.timeStamp).getTime(),
         };
       });
       setDisplayData(displayData);
@@ -116,6 +147,60 @@ export const Neumorphism = () => {
     }
   }, [data, type]);
 
+  const onPressLeft = () => {
+    const listSensorType = Object.values(SenSorType);
+    const index = listSensorType.indexOf(type);
+    if (index === 0) {
+      setType(listSensorType[listSensorType.length - 1]);
+    } else {
+      setType(listSensorType[index - 1]);
+    }
+  };
+
+  const onPressRight = () => {
+    const listSensorType = Object.values(SenSorType);
+    const index = listSensorType.indexOf(type);
+    if (index === listSensorType.length - 1) {
+      setType(listSensorType[0]);
+    } else {
+      setType(listSensorType[index + 1]);
+    }
+  };
+
+  const onPressWater = async () => {
+    try {
+      const res = await axios.post(
+        'https://smart-pot-server.onrender.com/state/pump/active',
+      );
+      console.log('res', res);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const onPressLight = () => {
+    try {
+      const res = axios.post(
+        'https://smart-pot-server.onrender.com/state/light/active',
+      );
+      console.log('res', res);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const titleText = useMemo(() => {
+    switch (type) {
+      case SenSorType.temperature:
+        return 'Nhiệt độ';
+      case SenSorType.humidity:
+        return 'Độ ẩm';
+      case SenSorType.light:
+        return 'Ánh sáng';
+      default:
+        return '';
+    }
+  }, [type]);
   return (
     <>
       <Canvas style={{flex: 1}} mode="continuous">
@@ -138,7 +223,7 @@ export const Neumorphism = () => {
               r={150}
             />
           </Group>
-          <Title title="Climate" />
+          <Title title={titleText} />
           {/* <Text>Refresh data after {countDown}</Text> */}
           <ProgressBar progress={progress} />
           <Control
@@ -155,6 +240,71 @@ export const Neumorphism = () => {
       </Canvas>
 
       <Modalize alwaysOpen={200} modalStyle={styles.modalize}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            paddingVertical: 20,
+            justifyContent: 'space-around',
+          }}>
+          <TouchableOpacity
+            onPress={onPressWater}
+            style={{
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+            <MaterialIcons
+              name="water-drop"
+              size={30}
+              color={state?.PumpStatus === true ? '#56CCF2' : 'white'}
+            />
+            <RNText style={styles.toggleText}>
+              {state?.PumpStatus === true ? 'Đang tưới' : 'Tưới nước'}
+            </RNText>
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={{
+                marginRight: 30,
+                padding: 4,
+              }}
+              onPress={onPressLeft}>
+              <Icon name="left" size={18} color="white" />
+            </TouchableOpacity>
+            <RNText style={styles.tempText}>{currentTemp}</RNText>
+            <MIcon name="temperature-celsius" size={20} color="white" />
+            <TouchableOpacity
+              style={{
+                marginLeft: 30,
+                padding: 4,
+              }}
+              onPress={onPressRight}>
+              <Icon name="right" size={18} color="white" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            onPress={onPressLight}
+            style={{
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+            <MaterialIcons
+              name="light-mode"
+              size={30}
+              color={state?.LightStatus === true ? '#56CCF2' : 'white'}
+            />
+            <RNText style={styles.toggleText}>
+              {state?.LightStatus === true ? 'Đang bật' : 'Bật đèn'}
+            </RNText>
+          </TouchableOpacity>
+        </View>
         {displayData.length > 0 && <Chart data={displayData} />}
       </Modalize>
     </>
@@ -167,5 +317,16 @@ const styles = StyleSheet.create({
     height: 200,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+  },
+  tempText: {
+    color: 'white',
+    fontWeight: '900',
+    fontSize: 20,
+  },
+  toggleText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 14,
+    paddingTop: 4,
   },
 });
