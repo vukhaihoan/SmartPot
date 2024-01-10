@@ -239,10 +239,7 @@ export const Neumorphism = () => {
         </Group>
       </Canvas>
 
-      <Modalize
-        alwaysOpen={120}
-        modalStyle={styles.modalize}
-        adjustToContentHeight={true}>
+      <Modalize alwaysOpen={120} modalStyle={styles.modalize}>
         <View
           style={{
             display: 'flex',
